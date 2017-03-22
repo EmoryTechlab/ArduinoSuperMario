@@ -189,6 +189,48 @@ void printStart(uint16_t textColor, uint16_t bgColor){
 
 // ------------------------------------------ Characters and Components ------------------------------------------
 
+//-------Clouds
+void drawClouds(int col){
+  matrix.drawLine(col, 3, col+4, 3, white);
+  matrix.drawLine(col+8, 3, col+12, 3, white);
+  matrix.drawLine(col + 3, 4, col + 7, 4, white);
+
+  col = col + 13;
+  matrix.drawLine(col, 0, col+4, 0, white);
+  matrix.drawLine(col+8, 0, col+12, 0, white);
+  matrix.drawLine(col + 3, 1, col + 7, 1, white);
+
+  col = col + 17;
+  matrix.drawLine(col, 3, col+4, 3, white);
+  matrix.drawLine(col+8, 3, col+12, 3, white);
+  matrix.drawLine(col + 3, 4, col + 7, 4, white);
+
+  col = col + 10;
+  matrix.drawLine(col, 0, col+4, 0, white);
+  matrix.drawLine(col+8, 0, col+12, 0, white);
+  matrix.drawLine(col + 3, 1, col + 7, 1, white);
+  
+}
+void clearClouds(int col){
+  matrix.drawLine(col, 3, col+4, 3, black);
+  matrix.drawLine(col+8, 3, col+12, 3, black);
+  matrix.drawLine(col + 3, 4, col + 7, 4, black);
+
+  col = col + 13;
+  matrix.drawLine(col, 0, col+4, 0, black);
+  matrix.drawLine(col+8, 0, col+12, 0, black);
+  matrix.drawLine(col + 3, 1, col + 7, 1, black);
+
+  col = col + 17;
+  matrix.drawLine(col, 3, col+4, 3, black);
+  matrix.drawLine(col+8, 3, col+12, 3, black);
+  matrix.drawLine(col + 3, 4, col + 7, 4, black);
+
+  col = col + 10;
+  matrix.drawLine(col, 0, col+4, 0, black);
+  matrix.drawLine(col+8, 0, col+12, 0, black);
+  matrix.drawLine(col + 3, 1, col + 7, 1, black);
+}
 
 //-------Goomba 
 void drawFullGoomba(int col, int row){
@@ -602,31 +644,39 @@ void clearFireFlower(int col, int row){
 // ------------------------------------------ Regular Mario Scene ------------------------------------------
 void regularMarioScene(int times){
    
-  int col = 0;
-  int row = 31;
-  
+  int mario_col = 0;
+  int mario_row = 31;
+
+  int cloud_col = 20;
+
+  drawClouds(cloud_col);
   drawMario(0, 31);
   int i = 0;
   
   while (i < times){
-    int x = 31;
-    int y = 31; 
+    cloud_col = 20;
+    int goomba_col = 31;
+    int goomba_row = 31; 
     bool started = false;
     int count = 0;
-    while(x > -9){
-        drawFullGoomba(x, y);
-        if ( abs (col + 13 - x) < 10 and row -  20){
-          clearMario(col, row);
-          drawMario(col, row-=1);
+    
+    while(goomba_col > -9){
+        drawClouds(cloud_col);
+        drawFullGoomba(goomba_col, goomba_row);
+        if ( abs (mario_col + 13 - goomba_col) < 10 and mario_row -  20){
+          clearMario(mario_col, mario_row);
+          drawMario(mario_col, mario_row-=1);
         }
 
-        clearFullGoomba(x, y);
-        x--;
+        clearFullGoomba(goomba_col, goomba_row);
+        clearClouds(cloud_col);
+        goomba_col--;
+        cloud_col--;
     }
   
-    while (row != 31){
-      clearMario(col, row);
-      drawMario(col, row+=1);
+    while (mario_row != 31){
+      clearMario(mario_col, mario_row);
+      drawMario(mario_col, mario_row+=1);
     }
     i++;
   }
@@ -636,16 +686,18 @@ void regularMarioScene(int times){
 // ------------------------------------------ Fire Mario Scene ------------------------------------------
 
 void fireMarioScene(int times){
-   
+  int cloud_col = 27;
   drawMario(0, 31);
-  //delay(1000);
   int i = 0;
   int box_col = 20;
   int box_row = 7;
   while (i < 15){
+    drawClouds(cloud_col);
     drawMysteryBox(box_col, box_row);
     delay(50);
     clearMysteryBox(box_col, box_row);
+    clearClouds(cloud_col);
+    cloud_col--;
     box_col--;
     i++;
   }
@@ -653,7 +705,9 @@ void fireMarioScene(int times){
   int mario_col = 0;
   int mario_row = 31;
   while( i < 2){
+    clearClouds(cloud_col);
     clearMario(mario_col, mario_row);
+    drawClouds(cloud_col-=1);
     drawMario(mario_col, mario_row -=1);
     i++;
   }
@@ -668,12 +722,13 @@ void fireMarioScene(int times){
   drawFireFlower(f_col, f_row);
   i = 0;
   while( i < 2){
+    clearClouds(cloud_col);
     clearMario(mario_col, mario_row);
+    drawClouds(cloud_col-=1);
     drawMario(mario_col, mario_row +=1);
     i++;
   }
 
-  
   while(f_row < 16){
     clearFireFlower(f_col, f_row);
     drawFireFlower(f_col, f_row+=1);
@@ -687,7 +742,6 @@ void fireMarioScene(int times){
   mario_col = 0;
   mario_row = 31;
   i = 0;
-  drawMario(mario_col, mario_col);
 
   while (i < times){
     int ball_col = 13;
@@ -695,24 +749,32 @@ void fireMarioScene(int times){
     int goom_col = 31;
     int goom_row = 31; 
     while(goom_col != ball_col){
+        drawClouds(cloud_col);
         drawFullGoomba(goom_col, goom_row);
         drawFireBall(ball_col, ball_row);
         delay(25);
         clearFullGoomba(goom_col, goom_row);
         clearFireBall(ball_col, ball_row);
+        clearClouds(cloud_col);
         ball_col++;
         goom_col--;
+        cloud_col--;
     }
+    drawClouds(cloud_col);
     drawFullGoomba(goom_col, goom_row);
     delay(50);
+    clearClouds(cloud_col);
     clearFullGoomba(goom_col, goom_row);
+    drawClouds(cloud_col-=1);
     drawFullGoomba(goom_col, goom_row-=1);
     delay(50);
+    clearClouds(cloud_col);
     clearFullGoomba(goom_col, goom_row);
+    drawClouds(cloud_col-=1);
     drawFullGoomba(goom_col, goom_row+=1);
     delay(50);
     clearFullGoomba(goom_col, goom_row);
-
+    clearClouds(cloud_col);
     delay(50);
     i++;
   }
@@ -778,9 +840,7 @@ void goalPoleScene(){
   matrix.fillRect(0,0,32,32, black);
 
 }
-
 // ------------------------------------------ Loop ------------------------------------------
-
 void loop() { 
   int times = 5;
   displayStartMessages();
